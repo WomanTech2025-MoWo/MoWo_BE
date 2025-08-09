@@ -1,0 +1,36 @@
+package com.womantech.mowo.domain.member.entity;
+
+import com.womantech.mowo.domain.common.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Members extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String userName;
+
+    private String password;
+
+    private String nickName;
+
+    @Builder.Default
+    private boolean isPregnant = false;
+
+    private LocalDate dueDate;
+
+    @Builder.Default
+    private boolean hasTwins = false;
+}
