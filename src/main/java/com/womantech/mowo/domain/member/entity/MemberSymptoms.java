@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -18,11 +20,22 @@ public class MemberSymptoms extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Members members;
+    private Members member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "symptoms_id", nullable = false)
-    private Symptoms symptoms;
+    private PregnantStatus pregnantStatus;     // 임신여부
+    private boolean hasTwins;                  // 쌍둥이 여부
+    private LocalDate dueDate;                 // 출산예정일
+
+    private boolean frequentUrination;        // 이뇨감
+    private boolean jointPain;                 // 관절통증
+    private boolean heartburn;                 // 속쓰림
+    private boolean abdominalTightness;       // 배 뭉침
+    private boolean drowsiness;                // 졸림
+    private boolean morningSickness;           // 입덧
+    private boolean constipationOrHemorrhoids; // 변비/치질
+    private boolean swelling;                  // 부종
+    private boolean dizziness;                 // 어지럼증
+    private boolean insomniaOrSleepDisorder;  // 불면/수면장애
 }

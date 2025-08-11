@@ -1,8 +1,13 @@
 package com.womantech.mowo.domain.member.dto;
 
+import com.womantech.mowo.domain.member.entity.PregnantStatus;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 public class UserRequestDTO {
 
@@ -30,5 +35,30 @@ public class UserRequestDTO {
 
         @NotBlank(message = "패스워드는 필수입니다.")
         private String password;
+    }
+
+    @Getter
+    @Setter
+    public static class OnboardingRequestDTO {
+
+        @NotNull(message = "임신 여부는 필수입니다.")
+        private PregnantStatus pregnantStatus;     // 임신여부
+
+        private boolean hasTwins;                  // 쌍둥이 여부
+
+        @NotNull(message = "출산 예정일은 필수입니다.")
+        @FutureOrPresent(message = "출산 예정일은 과거일 수 없습니다.")
+        private LocalDate dueDate;                 // 출산예정일
+
+        private boolean frequentUrination;        // 이뇨감
+        private boolean jointPain;                 // 관절통증
+        private boolean heartburn;                 // 속쓰림
+        private boolean abdominalTightness;       // 배 뭉침
+        private boolean drowsiness;                // 졸림
+        private boolean morningSickness;           // 입덧
+        private boolean constipationOrHemorrhoids; // 변비/치질
+        private boolean swelling;                  // 부종
+        private boolean dizziness;                 // 어지럼증
+        private boolean insomniaOrSleepDisorder;  // 불면/수면장애
     }
 }

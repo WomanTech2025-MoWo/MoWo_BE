@@ -3,8 +3,10 @@ package com.womantech.mowo.domain.member.service;
 import com.womantech.mowo.domain.member.converter.UserConverter;
 import com.womantech.mowo.domain.member.dto.UserRequestDTO;
 import com.womantech.mowo.domain.member.dto.UserResponseDTO;
+import com.womantech.mowo.domain.member.entity.MemberSymptoms;
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.domain.member.repository.MemberRepository;
+import com.womantech.mowo.domain.member.repository.MemberSymptomsRepository;
 import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
 import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
 import com.womantech.mowo.global.security.jwt.JwtTokenProvider;
@@ -17,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
+
+import static com.womantech.mowo.domain.member.converter.UserConverter.toMemberSymptoms;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final MemberSymptomsRepository memberSymptomsRepository;
 
     @Transactional
     public Members joinUser(UserRequestDTO.joinDTO joinDTO) {
@@ -69,6 +76,17 @@ public class MemberService {
                 member.getId(),
                 accessToken
         );
+    }
+
+    public void submitOnboardingSurvey(Long memberId,  UserRequestDTO.OnboardingRequestDTO request){
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Optional<MemberSymptoms> memberSymptoms = memberSymptomsRepository.findByMember(member);
+
+        if(memberSymptoms.isPresent()){
+            throw new MemberHandler(ErrorStatus.ONBOARDING_DUPLICATE);
+        }
+        memberSymptomsRepository.save(toMemberSymptoms(member,request));
     }
 
     public String checkNickname(String nickname) {

@@ -8,8 +8,10 @@ import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -45,5 +47,15 @@ public class MemberController {
     public ApiResponse<String> loginTest(@AuthUser Long userId){
         String result = "userID : " + userId;
         return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "온보딩 설문하기 API",
+            description = "온보딩 설문 내용을 저장합니다.")
+    @PostMapping("/onboarding")
+    public ApiResponse<String> submitOnboardingSurvey (
+            @AuthUser Long userId,
+            @RequestBody @Valid UserRequestDTO.OnboardingRequestDTO request){
+        memberService.submitOnboardingSurvey(userId, request);
+        return ApiResponse.onSuccess("온보딩 설문이 완료되었습니다.");
     }
 }

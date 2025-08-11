@@ -23,12 +23,15 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSWORD_COMPLEXITY_FAIL(HttpStatus.BAD_REQUEST, "USER4004", "비밀번호는 영문자, 숫자, 특수문자를 모두 포함해야 합니다."),
     LOGIN_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4005", "사용자 로그인 정보가 존재하지 않습니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4006", "이미 사용 중인 nickname입니다."),
+    ONBOARDING_DUPLICATE (HttpStatus.BAD_REQUEST, "USER4007", "온보딩 설문 결과가 이미 존재합니다."),
 
     // Auth 관련
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),
     AUTH_EXTRACT_ERROR(HttpStatus.UNAUTHORIZED, "AUTH4002", "토큰 추출에 실패했습니다."),
     INVALID_REQUEST_INFO_KAKAO(HttpStatus.UNAUTHORIZED, "AUTH_007", "카카오 정보 불러오기에 실패하였습니다."),
     AUTH_INVALID_CODE(HttpStatus.UNAUTHORIZED, "", "코드가 유효하지 않습니다."),
+
+
     ;
 
     private final HttpStatus httpStatus;
