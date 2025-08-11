@@ -26,6 +26,8 @@ public class Members extends BaseEntity {
 
     private String nickName;
 
+    private LocalDate birthday;
+
     @Builder.Default
     private boolean isPregnant = false;
 

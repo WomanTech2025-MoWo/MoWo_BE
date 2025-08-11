@@ -58,4 +58,12 @@ public class MemberController {
         memberService.submitOnboardingSurvey(userId, request);
         return ApiResponse.onSuccess("온보딩 설문이 완료되었습니다.");
     }
+
+    @Operation(summary = "사용자 정보 조회 API", description = "사용자 정보를 조회하는 API입니다.")
+    @GetMapping
+    public ApiResponse<UserResponseDTO.MemberInfoResponseDTO> getUserInfo(
+            @AuthUser Long userId) {
+        UserResponseDTO.MemberInfoResponseDTO result = memberService.getMemberInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
 }

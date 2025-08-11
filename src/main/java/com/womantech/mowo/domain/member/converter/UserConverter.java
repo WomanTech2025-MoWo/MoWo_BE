@@ -41,4 +41,26 @@ public class UserConverter {
                 .insomniaOrSleepDisorder(request.isInsomniaOrSleepDisorder())
                 .build();
     }
+
+    public static UserResponseDTO.MemberInfoResponseDTO toGetMemberInfoDTO(Members member, MemberSymptoms request){
+        return UserResponseDTO.MemberInfoResponseDTO.builder()
+                .userId(member.getId())
+                .nickName(member.getNickName())
+                .userName(member.getUserName())
+                .birthday(member.getBirthday())
+                .pregnantStatus(request.getPregnantStatus())
+                .dueDate(request.getDueDate())
+                .hasTwins(request.isHasTwins())
+                .frequentUrination(request.isFrequentUrination())
+                .jointPain(request.isJointPain())
+                .heartburn(request.isHeartburn())
+                .drowsiness(request.isDrowsiness())
+                .abdominalTightness(request.isAbdominalTightness())
+                .morningSickness(request.isMorningSickness())
+                .constipationOrHemorrhoids(request.isConstipationOrHemorrhoids())
+                .swelling(request.isSwelling())
+                .dizziness(request.isDizziness())
+                .insomniaOrSleepDisorder(request.isInsomniaOrSleepDisorder())
+                .build();
+    }
 }

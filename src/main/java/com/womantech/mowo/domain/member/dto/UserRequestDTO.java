@@ -46,7 +46,6 @@ public class UserRequestDTO {
 
         private boolean hasTwins;                  // 쌍둥이 여부
 
-        @NotNull(message = "출산 예정일은 필수입니다.")
         @FutureOrPresent(message = "출산 예정일은 과거일 수 없습니다.")
         private LocalDate dueDate;                 // 출산예정일
 

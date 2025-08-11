@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.womantech.mowo.domain.member.converter.UserConverter.toGetMemberInfoDTO;
 import static com.womantech.mowo.domain.member.converter.UserConverter.toMemberSymptoms;
 
 @Service
@@ -81,12 +82,21 @@ public class MemberService {
     public void submitOnboardingSurvey(Long memberId,  UserRequestDTO.OnboardingRequestDTO request){
         Members member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         Optional<MemberSymptoms> memberSymptoms = memberSymptomsRepository.findByMember(member);
 
         if(memberSymptoms.isPresent()){
             throw new MemberHandler(ErrorStatus.ONBOARDING_DUPLICATE);
         }
         memberSymptomsRepository.save(toMemberSymptoms(member,request));
+    }
+
+    public UserResponseDTO.MemberInfoResponseDTO getMemberInfo(Long memberId) {
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        MemberSymptoms memberSymptoms = memberSymptomsRepository.findByMember(member)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.ONBOARDING_NOT_FOUND));
+        return toGetMemberInfoDTO(member,memberSymptoms);
     }
 
     public String checkNickname(String nickname) {

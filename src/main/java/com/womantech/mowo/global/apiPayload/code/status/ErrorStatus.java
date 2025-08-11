@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     LOGIN_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4005", "사용자 로그인 정보가 존재하지 않습니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4006", "이미 사용 중인 nickname입니다."),
     ONBOARDING_DUPLICATE (HttpStatus.BAD_REQUEST, "USER4007", "온보딩 설문 결과가 이미 존재합니다."),
+    ONBOARDING_NOT_FOUND (HttpStatus.BAD_REQUEST, "USER4008", "온보딩 설문 정보가 존재하지 않습니다."),
 
     // Auth 관련
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),
