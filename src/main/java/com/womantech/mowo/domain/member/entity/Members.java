@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,21 +19,11 @@ public class Members extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private String userName;
-
     private String password;
-
     private String nickName;
-
     private LocalDate birthday;
-
-    @Builder.Default
-    private boolean isPregnant = false;
-
-    private LocalDate dueDate;
-
-    @Builder.Default
-    private boolean hasTwins = false;
 }

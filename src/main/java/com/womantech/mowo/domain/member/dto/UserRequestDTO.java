@@ -4,8 +4,7 @@ import com.womantech.mowo.domain.member.entity.PregnantStatus;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -59,5 +58,32 @@ public class UserRequestDTO {
         private boolean swelling;                  // 부종
         private boolean dizziness;                 // 어지럼증
         private boolean insomniaOrSleepDisorder;  // 불면/수면장애
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberInfoPatchRequestDTO{
+        String nickName;
+        String userName;
+        LocalDate birthday;
+
+        String password1;
+        String password2;
+
+        private PregnantStatus pregnantStatus;     // 임신여부
+        private Boolean  hasTwins;                  // 쌍둥이 여부
+        private LocalDate dueDate;                 // 출산예정일
+        private Boolean  frequentUrination;        // 이뇨감
+        private Boolean  jointPain;                 // 관절통증
+        private Boolean  heartburn;                 // 속쓰림
+        private Boolean  abdominalTightness;       // 배 뭉침
+        private Boolean  drowsiness;                // 졸림
+        private Boolean  morningSickness;           // 입덧
+        private Boolean  constipationOrHemorrhoids; // 변비/치질
+        private Boolean  swelling;                  // 부종
+        private Boolean  dizziness;                 // 어지럼증
+        private Boolean  insomniaOrSleepDisorder;  // 불면/수면장애
     }
 }

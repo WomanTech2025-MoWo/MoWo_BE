@@ -79,6 +79,7 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public void submitOnboardingSurvey(Long memberId,  UserRequestDTO.OnboardingRequestDTO request){
         Members member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -97,6 +98,52 @@ public class MemberService {
         MemberSymptoms memberSymptoms = memberSymptomsRepository.findByMember(member)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.ONBOARDING_NOT_FOUND));
         return toGetMemberInfoDTO(member,memberSymptoms);
+    }
+
+    @Transactional
+    public void patchMemebrInfo(Long memberId, UserRequestDTO.MemberInfoPatchRequestDTO request){
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        MemberSymptoms memberSymptoms = memberSymptomsRepository.findByMember(member)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.ONBOARDING_NOT_FOUND));
+
+        if ((request.getPassword1() != null && request.getPassword2() == null) ||
+                (request.getPassword1() == null && request.getPassword2() != null)) {
+            throw new MemberHandler(ErrorStatus.PASSWORD_MISMATCH);
+        }
+
+        updateMemberSymptoms(memberSymptoms,request);
+        updateMember(member,request);
+    }
+
+    private void updateMember(Members member, UserRequestDTO.MemberInfoPatchRequestDTO request) {
+        if (request.getUserName() != null) member.setUserName(request.getUserName());
+        if (request.getNickName() != null) member.setNickName(request.getNickName());
+        if (request.getBirthday() != null) member.setBirthday(request.getBirthday());
+
+        if (request.getPassword1() != null && request.getPassword2() != null) {
+            if (!request.getPassword1().equals(request.getPassword2())) {
+                throw new MemberHandler(ErrorStatus.PASSWORD_MISMATCH);
+            }
+            member.setPassword(passwordEncoder.encode(request.getPassword1()));
+        }
+    }
+
+    private void updateMemberSymptoms(MemberSymptoms symptoms, UserRequestDTO.MemberInfoPatchRequestDTO request) {
+        if (request.getPregnantStatus() != null) symptoms.setPregnantStatus(request.getPregnantStatus());
+        if (request.getHasTwins() != null) symptoms.setHasTwins(request.getHasTwins());
+        if (request.getDueDate() != null) symptoms.setDueDate(request.getDueDate());
+
+        if (request.getFrequentUrination() != null) symptoms.setFrequentUrination(request.getFrequentUrination());
+        if (request.getJointPain() != null) symptoms.setJointPain(request.getJointPain());
+        if (request.getHeartburn() != null) symptoms.setHeartburn(request.getHeartburn());
+        if (request.getAbdominalTightness() != null) symptoms.setAbdominalTightness(request.getAbdominalTightness());
+        if (request.getDrowsiness() != null) symptoms.setDrowsiness(request.getDrowsiness());
+        if (request.getMorningSickness() != null) symptoms.setMorningSickness(request.getMorningSickness());
+        if (request.getConstipationOrHemorrhoids() != null) symptoms.setConstipationOrHemorrhoids(request.getConstipationOrHemorrhoids());
+        if (request.getSwelling() != null) symptoms.setSwelling(request.getSwelling());
+        if (request.getDizziness() != null) symptoms.setDizziness(request.getDizziness());
+        if (request.getInsomniaOrSleepDisorder() != null) symptoms.setInsomniaOrSleepDisorder(request.getInsomniaOrSleepDisorder());
     }
 
     public String checkNickname(String nickname) {

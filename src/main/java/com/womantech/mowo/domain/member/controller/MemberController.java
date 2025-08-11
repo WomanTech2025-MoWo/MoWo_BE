@@ -66,4 +66,13 @@ public class MemberController {
         UserResponseDTO.MemberInfoResponseDTO result = memberService.getMemberInfo(userId);
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(summary = "사용자 정보 수정 API", description = "사용자 정보를 수정하는 API입니다.")
+    @PatchMapping
+    public ApiResponse<String> patchUserInfo(
+            @AuthUser Long userId,
+            @RequestBody UserRequestDTO.MemberInfoPatchRequestDTO request) {
+        memberService.patchMemebrInfo(userId, request);
+        return ApiResponse.onSuccess("사용자 정보 수정이 완료되었습니다.");
+    }
 }
