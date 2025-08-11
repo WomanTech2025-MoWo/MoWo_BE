@@ -1,6 +1,7 @@
 package com.womantech.mowo.domain.member.dto;
 
 import com.womantech.mowo.domain.member.entity.PregnantStatus;
+import com.womantech.mowo.domain.member.entity.Role;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,9 @@ public class UserRequestDTO {
 
         @NotBlank
         String password2;
+
+        @NotNull
+        Role role;
     }
 
     @Getter

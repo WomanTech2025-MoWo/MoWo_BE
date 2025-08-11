@@ -1,10 +1,7 @@
 package com.womantech.mowo.domain.member.entity;
 
 import com.womantech.mowo.domain.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -26,4 +23,7 @@ public class Members extends BaseEntity {
     private String password;
     private String nickName;
     private LocalDate birthday;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

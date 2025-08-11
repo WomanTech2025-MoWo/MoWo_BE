@@ -12,6 +12,7 @@ public class UserConverter {
                 .nickName(request.getNickname())
                 .userName(request.getUsername())
                 .password(password)
+                .role(request.getRole())
                 .build();
         return user;
     }

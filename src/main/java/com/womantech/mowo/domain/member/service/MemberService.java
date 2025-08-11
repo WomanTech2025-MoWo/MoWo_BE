@@ -117,7 +117,12 @@ public class MemberService {
     }
 
     private void updateMember(Members member, UserRequestDTO.MemberInfoPatchRequestDTO request) {
-        if (request.getUserName() != null) member.setUserName(request.getUserName());
+        if (request.getUserName() != null) {
+            if (memberRepository.existsByUserName(request.getUserName())) {
+                throw new MemberHandler(ErrorStatus.DUPLICATE_USERNAME);
+            }
+            member.setUserName(request.getUserName());
+        }
         if (request.getNickName() != null) member.setNickName(request.getNickName());
         if (request.getBirthday() != null) member.setBirthday(request.getBirthday());
 

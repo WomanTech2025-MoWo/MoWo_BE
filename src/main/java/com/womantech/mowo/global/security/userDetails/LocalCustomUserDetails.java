@@ -19,7 +19,7 @@ public class LocalCustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<String> roles = new ArrayList<>();
-        roles.add("ROLE_USER");
+        roles.add("ROLE_"+ member.getRole().name());
 
         return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
