@@ -3,15 +3,14 @@ package com.womantech.mowo.domain.todo.entity;
 import com.womantech.mowo.domain.common.BaseEntity;
 import com.womantech.mowo.domain.member.entity.Members;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,7 +29,10 @@ public class Todos extends BaseEntity {
 
     private LocalDate completeDate;
 
-    private LocalDate alarmDate;
+    @Builder.Default
+    private Boolean isDone = false;
+
+    private LocalDateTime alarmDate;
 
     @Column(length = 255, nullable = false)
     private String title;
