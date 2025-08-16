@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.womantech.mowo.domain.todo.converter.TodoConverter.toSaveTodos;
@@ -50,6 +51,20 @@ public class TodoService {
                 .toList();
     }
 
+    public List<TodoResponseDTO.CountTodo> getTodoCategoryCount(Long memberId) {
+        Members member = findMembersById(memberId);
+        LocalDate today = LocalDate.now();
+        
+        return Arrays.stream(TodoCategory.values())
+                .map(category -> {
+                    Long count = todoRepository.countByMembersAndTodoDateAndCategory(member, today, category);
+                    return TodoResponseDTO.CountTodo.builder()
+                            .todoCategory(category)
+                            .count(count.intValue())
+                            .build();
+                })
+                .toList();
+    }
 
     public TodoResponseDTO.TodoListResponseDTO getMyTodos(Long memberId, LocalDate date){
         Members member = findMembersById(memberId);

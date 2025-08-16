@@ -76,7 +76,7 @@ public class MemberController {
         return ApiResponse.onSuccess("사용자 정보 수정이 완료되었습니다.");
     }
 
-    @Operation(summary = "임신 주차 조회 API", description = "사용자의 임신 주차를 계산하는 API입니다.")
+    @Operation(summary = "임신 주차 조회 API", description = "사용자의 임신 주차와 출산 D-Day를 계산하는 API입니다.")
     @GetMapping("/pregnancy-week")
     public ApiResponse<UserResponseDTO.PregnancyWeekResponseDTO> getPregnancyWeek(
             @AuthUser Long userId) {

@@ -1,5 +1,6 @@
 package com.womantech.mowo.domain.todo.controller;
 
+import com.womantech.mowo.domain.member.dto.UserResponseDTO;
 import com.womantech.mowo.domain.todo.dto.TodoRequestDTO;
 import com.womantech.mowo.domain.todo.dto.TodoResponseDTO;
 import com.womantech.mowo.domain.todo.service.TodoService;
@@ -156,6 +157,14 @@ public class TodoController {
             @AuthUser Long memberId
     ){
         List<TodoResponseDTO.GetNotificationResponseDTO> result = todoService.getNotificationResponseDTOList(memberId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "각 항목 별 오늘의 투두 갯수 조회 API", description = "각 항목별 오늘의 TODO 갯수를 조회합니다.")
+    @GetMapping("/category-count")
+    public ApiResponse<List<TodoResponseDTO.CountTodo>> getTodoCategoryCount(
+            @Parameter(description = "인증된 사용자 ID", hidden = true) @AuthUser Long memberId) {
+        List<TodoResponseDTO.CountTodo> result = todoService.getTodoCategoryCount(memberId);
         return ApiResponse.onSuccess(result);
     }
 }

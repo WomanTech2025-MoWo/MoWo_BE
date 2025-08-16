@@ -25,4 +25,9 @@ public interface TodoRepository extends JpaRepository<Todos, Long> {
     
     @Query("SELECT t FROM Todos t WHERE t.alarmDate IS NOT NULL AND t.alarmDate <= :currentTime AND t.isDone = false")
     List<Todos> findTodosWithAlarmTimeBefore(@Param("currentTime") LocalDateTime currentTime);
+    
+    @Query("SELECT COUNT(t) FROM Todos t WHERE t.members = :member AND t.todoDate = :date AND t.category = :category AND t.isStorage = false")
+    Long countByMembersAndTodoDateAndCategory(@Param("member") Members member, 
+                                            @Param("date") LocalDate date, 
+                                            @Param("category") TodoCategory category);
 }
