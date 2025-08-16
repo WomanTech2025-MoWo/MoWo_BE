@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,7 @@ public interface TodoRepository extends JpaRepository<Todos, Long> {
     
     @Query("SELECT t FROM Todos t JOIN FETCH t.members WHERE t.members.id = :memberId AND t.isStorage = true")
     List<Todos> findDraftTodosByMemberId(@Param("memberId") Long memberId);
+    
+    @Query("SELECT t FROM Todos t WHERE t.alarmDate IS NOT NULL AND t.alarmDate <= :currentTime AND t.isDone = false")
+    List<Todos> findTodosWithAlarmTimeBefore(@Param("currentTime") LocalDateTime currentTime);
 }
