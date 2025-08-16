@@ -1,6 +1,7 @@
 package com.womantech.mowo.domain.member.entity;
 
 import com.womantech.mowo.domain.common.BaseEntity;
+import com.womantech.mowo.domain.todo.entity.TodoCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,9 @@ public class Notifications extends BaseEntity {
     private Long id;
 
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    private TodoCategory todoCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

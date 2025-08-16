@@ -4,6 +4,11 @@ import com.womantech.mowo.domain.member.dto.UserRequestDTO;
 import com.womantech.mowo.domain.member.dto.UserResponseDTO;
 import com.womantech.mowo.domain.member.entity.MemberSymptoms;
 import com.womantech.mowo.domain.member.entity.Members;
+import com.womantech.mowo.domain.member.entity.Notifications;
+import com.womantech.mowo.domain.todo.entity.Todos;
+
+import javax.management.Notification;
+import java.lang.reflect.Member;
 
 public class UserConverter {
 
@@ -62,6 +67,14 @@ public class UserConverter {
                 .swelling(request.isSwelling())
                 .dizziness(request.isDizziness())
                 .insomniaOrSleepDisorder(request.isInsomniaOrSleepDisorder())
+                .build();
+    }
+
+    public static Notifications toNotifications(Members members, Todos todos){
+        return Notifications.builder()
+                .members(members)
+                .todoCategory(todos.getCategory())
+                .content(todos.getTitle())
                 .build();
     }
 }

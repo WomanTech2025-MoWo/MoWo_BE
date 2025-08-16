@@ -23,7 +23,7 @@ public class MemberController {
             description = "아이디(이메일)와 비밀번호를 입력하여 회원가입을 진행합니다." +
                     "비밀번호 확인란(password2)은 password1과 반드시 일치해야 합니다.")
     @PostMapping("/auth/signup")
-    public ApiResponse<String> joinService (@Valid @RequestBody UserRequestDTO.joinDTO request){
+    public ApiResponse<String> joinService(@Valid @RequestBody UserRequestDTO.joinDTO request) {
         memberService.joinUser(request);
         return ApiResponse.onSuccess("회원가입이 완료되었습니다.");
     }
@@ -31,7 +31,7 @@ public class MemberController {
     @Operation(summary = "일반 로그인 API",
             description = "아이디와 비밀번호를 정확히 입력하면 인증에 성공하며, Access Token이 발급됩니다.")
     @PostMapping("/auth/login")
-    public ApiResponse<UserResponseDTO.LoginResultDTO> localLogin (@RequestBody UserRequestDTO.LoginDTO request){
+    public ApiResponse<UserResponseDTO.LoginResultDTO> localLogin(@RequestBody UserRequestDTO.LoginDTO request) {
         return ApiResponse.onSuccess(memberService.loginUser(request));
     }
 
@@ -44,7 +44,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 ID 주입 테스트", description = "@AuthUser을 사용한 현사용자 ID 자동 주입 예시입니다.")
     @GetMapping("test")
-    public ApiResponse<String> loginTest(@AuthUser Long userId){
+    public ApiResponse<String> loginTest(@AuthUser Long userId) {
         String result = "userID : " + userId;
         return ApiResponse.onSuccess(result);
     }
@@ -52,9 +52,9 @@ public class MemberController {
     @Operation(summary = "온보딩 설문하기 API",
             description = "온보딩 설문 내용을 저장합니다.")
     @PostMapping("/onboarding")
-    public ApiResponse<String> submitOnboardingSurvey (
+    public ApiResponse<String> submitOnboardingSurvey(
             @AuthUser Long userId,
-            @RequestBody @Valid UserRequestDTO.OnboardingRequestDTO request){
+            @RequestBody @Valid UserRequestDTO.OnboardingRequestDTO request) {
         memberService.submitOnboardingSurvey(userId, request);
         return ApiResponse.onSuccess("온보딩 설문이 완료되었습니다.");
     }
@@ -74,5 +74,21 @@ public class MemberController {
             @RequestBody UserRequestDTO.MemberInfoPatchRequestDTO request) {
         memberService.patchMemebrInfo(userId, request);
         return ApiResponse.onSuccess("사용자 정보 수정이 완료되었습니다.");
+    }
+
+    @Operation(summary = "임신 주차 조회 API", description = "사용자의 임신 주차와 출산 D-Day를 계산하는 API입니다.")
+    @GetMapping("/pregnancy-week")
+    public ApiResponse<UserResponseDTO.PregnancyWeekResponseDTO> getPregnancyWeek(
+            @AuthUser Long userId) {
+        UserResponseDTO.PregnancyWeekResponseDTO result = memberService.getPregnancyWeek(userId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "현재 사용자 AI 아웃풋 조회 API", description = "사용자의 건강 정보를 기반으로 AI 아웃풋을 조회합니다.")
+    @GetMapping("/ai-output")
+    public ApiResponse<UserResponseDTO.AiOutputResponseDTO> getAiOutput(
+            @AuthUser Long userId) {
+        UserResponseDTO.AiOutputResponseDTO result = memberService.getRandomAiOutput(userId);
+        return ApiResponse.onSuccess(result);
     }
 }

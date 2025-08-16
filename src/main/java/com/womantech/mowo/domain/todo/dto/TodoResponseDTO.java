@@ -81,4 +81,22 @@ public class TodoResponseDTO {
         private List<TodoInfoDTO> todos;
         private Integer totalCount;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetNotificationResponseDTO {
+        private String content;
+        private TodoCategory todoCategory;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CountTodo {
+        private TodoCategory todoCategory;
+        private Integer count;
+    }
 }

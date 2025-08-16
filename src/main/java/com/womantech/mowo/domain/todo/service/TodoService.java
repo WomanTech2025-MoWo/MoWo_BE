@@ -1,7 +1,9 @@
 package com.womantech.mowo.domain.todo.service;
 
 import com.womantech.mowo.domain.member.entity.Members;
+import com.womantech.mowo.domain.member.entity.Notifications;
 import com.womantech.mowo.domain.member.repository.MemberRepository;
+import com.womantech.mowo.domain.member.repository.NotificationRepository;
 import com.womantech.mowo.domain.todo.converter.TodoConverter;
 import com.womantech.mowo.domain.todo.dto.TodoRequestDTO;
 import com.womantech.mowo.domain.todo.dto.TodoResponseDTO;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.womantech.mowo.domain.todo.converter.TodoConverter.toSaveTodos;
@@ -28,6 +31,40 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final MemberRepository memberRepository;
+    private final NotificationRepository notificationRepository;
+
+    public List<TodoResponseDTO.GetNotificationResponseDTO> getNotificationResponseDTOList(Long memberId){
+        Members members = findMembersById(memberId);
+        
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        
+        List<Notifications> notifications = notificationRepository.findByMembersAndCreatedAtBetween(
+                members, startOfDay, endOfDay);
+        
+        return notifications.stream()
+                .map(notification -> TodoResponseDTO.GetNotificationResponseDTO.builder()
+                        .content(notification.getContent())
+                        .todoCategory(notification.getTodoCategory())
+                        .build())
+                .toList();
+    }
+
+    public List<TodoResponseDTO.CountTodo> getTodoCategoryCount(Long memberId) {
+        Members member = findMembersById(memberId);
+        LocalDate today = LocalDate.now();
+        
+        return Arrays.stream(TodoCategory.values())
+                .map(category -> {
+                    Long count = todoRepository.countByMembersAndTodoDateAndCategory(member, today, category);
+                    return TodoResponseDTO.CountTodo.builder()
+                            .todoCategory(category)
+                            .count(count.intValue())
+                            .build();
+                })
+                .toList();
+    }
 
     public TodoResponseDTO.TodoListResponseDTO getMyTodos(Long memberId, LocalDate date){
         Members member = findMembersById(memberId);

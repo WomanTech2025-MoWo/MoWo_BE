@@ -13,13 +13,19 @@ import com.womantech.mowo.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.womantech.mowo.domain.member.converter.UserConverter.toGetMemberInfoDTO;
 import static com.womantech.mowo.domain.member.converter.UserConverter.toMemberSymptoms;
@@ -33,6 +39,22 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final MemberSymptomsRepository memberSymptomsRepository;
+
+
+    public UserResponseDTO.PregnancyWeekResponseDTO getPregnancyWeek(Long memberId){
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        int pregnancyWeek = calculatePregnancyWeek(member);
+        Integer dDayToBirth = calculateDDayToBirth(member);
+        
+        return UserResponseDTO.PregnancyWeekResponseDTO.builder()
+                .userId(memberId)
+                .pregnantWeek(pregnancyWeek)
+                .dDayToBirth(dDayToBirth)
+                .build();
+    }
+
 
     @Transactional
     public Members joinUser(UserRequestDTO.joinDTO joinDTO) {
@@ -158,5 +180,52 @@ public class MemberService {
         } else {
             throw new MemberHandler(ErrorStatus.DUPLICATE_NICKNAME);
         }
+    }
+
+    private int calculatePregnancyWeek(Members member) {
+        MemberSymptoms memberSymptoms = memberSymptomsRepository.findByMember(member)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.ONBOARDING_NOT_FOUND));
+        
+        LocalDate dueDate = memberSymptoms.getDueDate();
+        if (dueDate == null) {
+            return 0;
+        }
+        
+        LocalDate today = LocalDate.now();
+        LocalDate pregnancyStartDate = dueDate.minusWeeks(40);
+        
+        long daysBetween = ChronoUnit.DAYS.between(pregnancyStartDate, today);
+        int pregnancyWeek = (int) (daysBetween / 7);
+        
+        return Math.max(0, Math.min(pregnancyWeek, 40));
+    }
+
+    private Integer calculateDDayToBirth(Members member) {
+        MemberSymptoms memberSymptoms = memberSymptomsRepository.findByMember(member)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.ONBOARDING_NOT_FOUND));
+        
+        LocalDate dueDate = memberSymptoms.getDueDate();
+        if (dueDate == null) {
+            return null;
+        }
+        
+        LocalDate today = LocalDate.now();
+        long daysUntilBirth = ChronoUnit.DAYS.between(today, dueDate);
+        
+        return (int) daysUntilBirth;
+    }
+
+    public UserResponseDTO.AiOutputResponseDTO getRandomAiOutput(Long memberId) {
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        String[] statuses = {"좋음", "나쁨", "중간"};
+        Random random = new Random();
+        String randomStatus = statuses[random.nextInt(statuses.length)];
+        
+        return UserResponseDTO.AiOutputResponseDTO.builder()
+                .userId(memberId)
+                .status(randomStatus)
+                .build();
     }
 }
