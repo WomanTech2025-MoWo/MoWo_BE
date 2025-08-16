@@ -1,8 +1,6 @@
 package com.womantech.mowo.domain.member.dto;
 
 import com.womantech.mowo.domain.member.entity.PregnantStatus;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +9,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 public class UserResponseDTO {
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PregnancyWeekResponseDTO {
+        Long userId;
+        int pregnantWeek;
+        Integer dDayToBirth;
+    }
 
     @Builder
     @Getter
