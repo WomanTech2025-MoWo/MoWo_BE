@@ -32,7 +32,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_REQUEST_INFO_KAKAO(HttpStatus.UNAUTHORIZED, "AUTH_007", "카카오 정보 불러오기에 실패하였습니다."),
     AUTH_INVALID_CODE(HttpStatus.UNAUTHORIZED, "", "코드가 유효하지 않습니다."),
 
-
+    // Todos 관련
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO0001", "해당하는 Todo를 찾을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

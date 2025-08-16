@@ -1,10 +1,13 @@
 package com.womantech.mowo.domain.member.entity;
 
 import com.womantech.mowo.domain.common.BaseEntity;
+import com.womantech.mowo.domain.todo.entity.Todos;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,4 +29,7 @@ public class Members extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "members", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Todos> todosList = new ArrayList<>();
 }
