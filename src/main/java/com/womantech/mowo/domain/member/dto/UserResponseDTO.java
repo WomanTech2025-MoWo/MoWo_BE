@@ -53,4 +53,13 @@ public class UserResponseDTO {
         private boolean dizziness;                 // 어지럼증
         private boolean insomniaOrSleepDisorder;  // 불면/수면장애
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AiOutputResponseDTO {
+        Long userId;
+        String status; // "좋음", "나쁨", "중간"
+    }
 }

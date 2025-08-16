@@ -25,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.womantech.mowo.domain.member.converter.UserConverter.toGetMemberInfoDTO;
 import static com.womantech.mowo.domain.member.converter.UserConverter.toMemberSymptoms;
@@ -212,5 +213,19 @@ public class MemberService {
         long daysUntilBirth = ChronoUnit.DAYS.between(today, dueDate);
         
         return (int) daysUntilBirth;
+    }
+
+    public UserResponseDTO.AiOutputResponseDTO getRandomAiOutput(Long memberId) {
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        String[] statuses = {"좋음", "나쁨", "중간"};
+        Random random = new Random();
+        String randomStatus = statuses[random.nextInt(statuses.length)];
+        
+        return UserResponseDTO.AiOutputResponseDTO.builder()
+                .userId(memberId)
+                .status(randomStatus)
+                .build();
     }
 }
