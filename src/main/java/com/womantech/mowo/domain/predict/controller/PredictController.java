@@ -1,7 +1,7 @@
 package com.womantech.mowo.domain.predict.controller;
 
-import com.womantech.mowo.domain.predict.dto.PredictRequest;
-import com.womantech.mowo.domain.predict.dto.PredictResponse;
+import com.womantech.mowo.domain.predict.dto.PredictRequestDTO;
+import com.womantech.mowo.domain.predict.dto.PredictResponseDTO;
 import com.womantech.mowo.domain.predict.service.PredictService;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ public class PredictController {
     }
 
     @PostMapping
-    public ResponseEntity<PredictResponse> predict(@Valid @RequestBody PredictRequest req) {
+    public ResponseEntity<PredictResponseDTO> predict(@Valid @RequestBody PredictRequestDTO req) {
         return ResponseEntity.ok(service.predict(req));
     }
 }

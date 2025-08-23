@@ -2,11 +2,11 @@ package com.womantech.mowo.domain.predict.dto;
 
 import java.util.List;
 
-public class PredictResponse {
+public class PredictResponseDTO {
     private List<String> predictions;
 
-    public PredictResponse() {}
-    public PredictResponse(List<String> predictions) {
+    public PredictResponseDTO() {}
+    public PredictResponseDTO(List<String> predictions) {
         this.predictions = predictions;
     }
 
