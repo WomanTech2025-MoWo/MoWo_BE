@@ -20,3 +20,8 @@ jwt:
   secret: ${JWT_SECRET_KEY}
   access-token-validity: ${JWT_ACCESS_TOKEN_TIME}
   refresh-token-validity: ${JWT_REFRESH_TOKEN_TIME}
+ai:
+  python-exec: "${PROJECT_PATH}/venv/Scripts/python.exe"  # venv 안 python 경로
+  script-path: "${PROJECT_PATH}/ai/predict.py"           # predict.py 절대경로
+  timeout-ms: 10000                                           # 1회 요청 최대 10초
+  expected-features: 21                                       # 현재 모델 차원 수 (패딩 기준)

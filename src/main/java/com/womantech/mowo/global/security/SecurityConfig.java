@@ -45,6 +45,7 @@ public class SecurityConfig {
                         (requests) -> requests
                                 .requestMatchers(SECURITY_ALLOW_ARRAY).permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/predict").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
