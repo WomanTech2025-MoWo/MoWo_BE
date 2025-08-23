@@ -2,8 +2,8 @@ package com.womantech.mowo.domain.predict.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.womantech.mowo.domain.predict.dto.PredictRequest;
-import com.womantech.mowo.domain.predict.dto.PredictResponse;
+import com.womantech.mowo.domain.predict.dto.PredictRequestDTO;
+import com.womantech.mowo.domain.predict.dto.PredictResponseDTO;
 import com.womantech.mowo.global.ai.PythonProperties;
 import com.womantech.mowo.global.ai.PythonRunner;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class PredictService {
         this.mapper = mapper;
     }
 
-    public PredictResponse predict(PredictRequest req) {
+    public PredictResponseDTO predict(PredictRequestDTO req) {
         // 1) 입력 패딩/검증
         List<List<Integer>> padded = padToExpected(req.getFeatures(), props.getExpectedFeatures());
 
@@ -46,7 +46,7 @@ public class PredictService {
             if (preds != null && preds.isArray()) {
                 preds.forEach(n -> list.add(n.asText()));
             }
-            return new PredictResponse(list);
+            return new PredictResponseDTO(list);
         } catch (Exception e) {
             throw new IllegalStateException("파이썬 출력 파싱 실패: " + e.getMessage() + ", raw=" + stdout, e);
         }

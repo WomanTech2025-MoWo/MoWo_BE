@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PredictRequest {
+public class PredictRequestDTO {
     @NotNull
     @NotEmpty
     private List<List<Integer>> features; // 0/1 정수로 받기 (boolean 대신)
