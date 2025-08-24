@@ -40,3 +40,6 @@ out/
 venv/
 *.pkl
 ai/input.json
+
+### Test ###
+jmeter

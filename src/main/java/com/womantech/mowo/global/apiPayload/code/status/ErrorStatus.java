@@ -34,6 +34,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Todos 관련
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO0001", "해당하는 Todo를 찾을 수 없습니다."),
+
+    // Policy 관련
+    POLICY_NOT_FOUND(HttpStatus.NOT_FOUND, "POLICY404", "존재하지 않는 정책입니다."),
     ;
 
     private final HttpStatus httpStatus;
