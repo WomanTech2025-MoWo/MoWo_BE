@@ -15,7 +15,7 @@ public class TodoConverter {
                 .title(dto.getTitle())
                 .memo(dto.getMemo())
                 .isFixed(dto.getIsFixed())
-                .isStorage(true)
+                .isStorage(dto.getIsStorage())
                 .category(dto.getTodoCategory())
                 .build();
     }

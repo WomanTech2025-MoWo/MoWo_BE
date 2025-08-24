@@ -18,6 +18,7 @@ public class TodoRequestDTO {
         private String memo;
         private TodoCategory todoCategory;
         private Boolean isFixed;
+        private Boolean isStorage;
     }
 
     @Getter
