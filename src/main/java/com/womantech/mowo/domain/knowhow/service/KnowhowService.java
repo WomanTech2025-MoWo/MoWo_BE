@@ -5,9 +5,7 @@ import com.womantech.mowo.domain.knowhow.dto.KnowhowResponseListDTO;
 import com.womantech.mowo.domain.knowhow.entity.Knowhow;
 import com.womantech.mowo.domain.knowhow.repository.KnowhowRepository;
 import com.womantech.mowo.domain.member.entity.Members;
-import com.womantech.mowo.domain.member.repository.MemberRepository;
-import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
-import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.security.service.AuthorizationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,27 +16,16 @@ public class KnowhowService {
 
     private final KnowhowRepository knowhowRepository;
     private final KnowhowConverter knowhowConverter;
-    private final MemberRepository memberRepository;
+    private final AuthorizationService authorizationService;
 
-
-    public KnowhowService(KnowhowRepository knowhowRepository, KnowhowConverter knowhowConverter, MemberRepository memberRepository) {
+    public KnowhowService(KnowhowRepository knowhowRepository, KnowhowConverter knowhowConverter, AuthorizationService authorizationService) {
         this.knowhowRepository = knowhowRepository;
         this.knowhowConverter = knowhowConverter;
-        this.memberRepository = memberRepository;
-    }
-
-    public Members getMemberOrThrow(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        this.authorizationService = authorizationService;
     }
 
     public Members ensureAdminOrThrow(Long userId) {
-        Members m = getMemberOrThrow(userId);
-        String role = String.valueOf(m.getRole());
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-            throw new MemberHandler(ErrorStatus._FORBIDDEN);
-        }
-        return m;
+        return authorizationService.ensureAdminOrThrow(userId);
     }
 
     public List<KnowhowResponseListDTO> getAll() {

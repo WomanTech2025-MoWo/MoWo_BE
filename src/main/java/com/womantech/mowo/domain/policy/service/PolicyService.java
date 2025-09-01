@@ -1,11 +1,9 @@
 package com.womantech.mowo.domain.policy.service;
 
 import com.womantech.mowo.domain.member.entity.Members;
-import com.womantech.mowo.domain.member.repository.MemberRepository;
 import com.womantech.mowo.domain.policy.entity.Policy;
 import com.womantech.mowo.domain.policy.repository.PolicyRepository;
-import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
-import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.security.service.AuthorizationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,25 +19,15 @@ import java.util.stream.Collectors;
 public class PolicyService {
 
     private final PolicyRepository policyRepository;
-    private final MemberRepository memberRepository;
+    private final AuthorizationService authorizationService;
 
-    public PolicyService(PolicyRepository policyRepository, MemberRepository memberRepository) {
+    public PolicyService(PolicyRepository policyRepository, AuthorizationService authorizationService) {
         this.policyRepository = policyRepository;
-        this.memberRepository = memberRepository;
-    }
-
-    public Members getMemberOrThrow(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        this.authorizationService = authorizationService;
     }
 
     public Members ensureAdminOrThrow(Long userId) {
-        Members m = getMemberOrThrow(userId);
-        String role = String.valueOf(m.getRole());
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-            throw new MemberHandler(ErrorStatus._FORBIDDEN);
-        }
-        return m;
+        return authorizationService.ensureAdminOrThrow(userId);
     }
 
     // 전체 조회, 페이징 없음
