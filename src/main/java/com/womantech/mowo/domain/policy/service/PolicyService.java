@@ -2,19 +2,17 @@ package com.womantech.mowo.domain.policy.service;
 
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.domain.policy.entity.Policy;
+import com.womantech.mowo.domain.policy.entity.RegionCode;
 import com.womantech.mowo.domain.policy.repository.PolicyRepository;
 import com.womantech.mowo.global.security.service.AuthorizationService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PolicyService {
@@ -43,44 +41,67 @@ public class PolicyService {
         return policyRepository.findAll(pageable);
     }
 
-    // 필터링: 지역구, 진행 상태(현재/예정/지난)
-    public Page<Policy> search(String regionCode, String status, Pageable pageable) {
-        List<Policy> base = (regionCode == null || regionCode.isBlank())
-                ? policyRepository.findAll()
-                : policyRepository.findByRegionCode(regionCode);
-
-        if (status != null && !status.isBlank()) {
-            LocalDate today = LocalDate.now();
-            base = base.stream()
-                    .filter(p -> matchesStatus(p, status, today))
-                    .collect(Collectors.toList());
+    // 필터링: 지역구, 진행 상태(현재/예정/지난) - DB 레벨에서 처리
     @Transactional(readOnly = true)
+    public Page<Policy> search(String regionCodeStr, String status, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        
+        boolean hasRegion = regionCodeStr != null && !regionCodeStr.isBlank();
+        boolean hasStatus = status != null && !status.isBlank();
+        
+        // 지역과 상태 둘 다 있는 경우
+        if (hasRegion && hasStatus) {
+            RegionCode regionCode = RegionCode.fromCode(regionCodeStr);
+            return searchByRegionAndStatus(regionCode, status, today, pageable);
         }
-
-        // 수동 페이지네이션
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), base.size());
-        List<Policy> content = (start > end) ? Collections.emptyList() : base.subList(start, end);
-        return new PageImpl<>(content, pageable, base.size());
+        
+        // 상태만 있는 경우
+        if (hasStatus) {
+            return searchByStatus(status, today, pageable);
+        }
+        
+        // 지역만 있는 경우
+        if (hasRegion) {
+            RegionCode regionCode = RegionCode.fromCode(regionCodeStr);
+            return policyRepository.findByRegionCode(regionCode, pageable);
+        }
+        
+        // 필터 없는 경우
+        return policyRepository.findAll(pageable);
     }
-
-    private boolean matchesStatus(Policy p, String status, LocalDate today) {
-        LocalDate s = p.getStartDate();
-        LocalDate e = p.getEndDate();
-
-        String key = status.trim().toLowerCase(); // "current|upcoming|past" or "현재|예정|지난"
+    
+    private Page<Policy> searchByRegionAndStatus(RegionCode regionCode, String status, LocalDate today, Pageable pageable) {
+        String key = status.trim().toLowerCase();
+        
         switch (key) {
             case "current":
             case "현재":
-                return (s == null || !s.isAfter(today)) && (e == null || !e.isBefore(today));
+                return policyRepository.findCurrentPoliciesByRegion(regionCode, today, pageable);
             case "upcoming":
             case "예정":
-                return s != null && s.isAfter(today);
+                return policyRepository.findUpcomingPoliciesByRegion(regionCode, today, pageable);
             case "past":
             case "지난":
-                return e != null && e.isBefore(today);
+                return policyRepository.findPastPoliciesByRegion(regionCode, today, pageable);
             default:
-                return true; // 알 수 없는 상태면 필터 미적용
+                return policyRepository.findByRegionCode(regionCode, pageable);
+        }
+    }
+    
+    private Page<Policy> searchByStatus(String status, LocalDate today, Pageable pageable) {
+        String key = status.trim().toLowerCase();
+        switch (key) {
+            case "current":
+            case "현재":
+                return policyRepository.findCurrentPolicies(today, pageable);
+            case "upcoming":
+            case "예정":
+                return policyRepository.findUpcomingPolicies(today, pageable);
+            case "past":
+            case "지난":
+                return policyRepository.findPastPolicies(today, pageable);
+            default:
+                return policyRepository.findAll(pageable);
         }
     }
 

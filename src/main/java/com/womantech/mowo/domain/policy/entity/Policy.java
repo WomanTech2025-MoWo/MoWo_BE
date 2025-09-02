@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "policy", indexes = {
+    @Index(name = "idx_policy_region_code", columnList = "regionCode"),
+    @Index(name = "idx_policy_start_date", columnList = "startDate"),
+    @Index(name = "idx_policy_end_date", columnList = "endDate"),
+    @Index(name = "idx_policy_region_start", columnList = "regionCode, startDate"),
+    @Index(name = "idx_policy_region_end", columnList = "regionCode, endDate")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,8 +35,9 @@ public class Policy extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(length = 50, nullable = false)
-    private String regionCode;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RegionCode regionCode;
 
     @Column(nullable = false)
     private LocalDate startDate;

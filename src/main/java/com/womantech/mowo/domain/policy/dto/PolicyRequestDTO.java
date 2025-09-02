@@ -1,5 +1,6 @@
 package com.womantech.mowo.domain.policy.dto;
 
+import com.womantech.mowo.domain.policy.entity.RegionCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,8 +16,10 @@ public class PolicyRequestDTO {
     @NotBlank(message = "제목은 필수입니다")
     @Size(max = 200, message = "제목은 200자 이하여야 합니다")
     private String title;
-    private String regionCode;
+    
     @NotNull(message = "지역 코드는 필수입니다")
+    private RegionCode regionCode;
+    
     @NotNull(message = "시작 날짜는 필수입니다")
     private LocalDate startDate;
     
