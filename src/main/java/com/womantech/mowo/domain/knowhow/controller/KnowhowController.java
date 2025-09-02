@@ -9,7 +9,7 @@ import com.womantech.mowo.domain.knowhow.service.KnowhowService;
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.global.apiPayload.ApiResponse;
 import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
-import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.apiPayload.exception.handler.KnowhowHandler;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class KnowhowController {
     @GetMapping("/{id}")
     public ApiResponse<KnowhowResponseDTO> detail(@PathVariable Long id) {
         Knowhow knowhow = knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
         return ApiResponse.onSuccess(knowhowConverter.toDTO(knowhow));
     }
 
@@ -59,7 +59,7 @@ public class KnowhowController {
         knowhowService.ensureAdminOrThrow(userId);
 
         Knowhow knowhow = knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
 
         knowhowConverter.apply(knowhow, request);
 
@@ -72,7 +72,7 @@ public class KnowhowController {
     public ApiResponse<String> delete(@AuthUser Long userId, @PathVariable Long id) {
         knowhowService.ensureAdminOrThrow(userId);
         knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
         knowhowService.deleteById(id);
         return ApiResponse.onSuccess("노하우가 삭제되었습니다.");
     }
