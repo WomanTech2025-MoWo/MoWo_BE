@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -31,11 +32,13 @@ public class PolicyService {
     }
 
     // 전체 조회, 페이징 없음
+    @Transactional(readOnly = true)
     public List<Policy> getAll() {
         return policyRepository.findAll();
     }
 
     // 전체 조회, 페이징 있음
+    @Transactional(readOnly = true)
     public Page<Policy> getAll(Pageable pageable){
         return policyRepository.findAll(pageable);
     }
@@ -51,6 +54,7 @@ public class PolicyService {
             base = base.stream()
                     .filter(p -> matchesStatus(p, status, today))
                     .collect(Collectors.toList());
+    @Transactional(readOnly = true)
         }
 
         // 수동 페이지네이션
@@ -81,21 +85,25 @@ public class PolicyService {
     }
 
     // 상세 조회
+    @Transactional(readOnly = true)
     public Optional<Policy> getById(Long id) {
         return policyRepository.findByIdWithTodos(id);
     }
 
     // 등록
+    @Transactional
     public Policy create(Policy policy) {
         return policyRepository.save(policy);
     }
 
     // 수정
+    @Transactional
     public Policy update(Policy policy) {
         return policyRepository.save(policy);
     }
 
     // 삭제
+    @Transactional
     public void deleteById(Long id) {
         policyRepository.deleteById(id);
     }
