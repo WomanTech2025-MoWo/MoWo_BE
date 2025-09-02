@@ -42,7 +42,7 @@ public class KnowhowController {
 
     @Operation(summary = "노하우 등록", description = "관리자만.")
     @PostMapping
-    public ApiResponse<KnowhowResponseDTO> create(@AuthUser Long userId, @RequestBody KnowhowRequestDTO request) {
+    public ApiResponse<KnowhowResponseDTO> create(@AuthUser Long userId, @Valid @RequestBody KnowhowRequestDTO request) {
         Members admin = knowhowService.ensureAdminOrThrow(userId);
         Knowhow knowhow = knowhowConverter.toEntity(request, admin);
         Knowhow saved = knowhowService.create(knowhow);
@@ -54,7 +54,7 @@ public class KnowhowController {
     public ApiResponse<KnowhowResponseDTO> update(
             @AuthUser Long userId,
             @PathVariable Long id,
-            @RequestBody KnowhowRequestDTO request
+            @Valid @RequestBody KnowhowRequestDTO request
     ) {
         knowhowService.ensureAdminOrThrow(userId);
 
