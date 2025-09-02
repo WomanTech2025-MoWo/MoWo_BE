@@ -12,6 +12,7 @@ import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
 import com.womantech.mowo.global.apiPayload.exception.handler.KnowhowHandler;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
