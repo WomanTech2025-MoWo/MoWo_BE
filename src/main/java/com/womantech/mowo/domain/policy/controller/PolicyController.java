@@ -9,7 +9,7 @@ import com.womantech.mowo.domain.policy.entity.Policy;
 import com.womantech.mowo.domain.policy.service.PolicyService;
 import com.womantech.mowo.global.apiPayload.ApiResponse;
 import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
-import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.apiPayload.exception.handler.PolicyHandler;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -43,7 +43,7 @@ public class PolicyController {
     @GetMapping("/{id}")
     public ApiResponse<PolicyResponseDTO> detail(@PathVariable Long id) {
         Policy policy = policyService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.POLICY_NOT_FOUND));
+                .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
         return ApiResponse.onSuccess(policyConverter.toDTO(policy));
     }
 
@@ -69,7 +69,7 @@ public class PolicyController {
         policyService.ensureAdminOrThrow(userId);
 
         Policy policy = policyService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.POLICY_NOT_FOUND));
+                .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
 
         policyConverter.apply(policy, request);
 
@@ -82,7 +82,7 @@ public class PolicyController {
     public ApiResponse<String> delete(@AuthUser Long userId, @PathVariable Long id) {
         policyService.ensureAdminOrThrow(userId);
         policyService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.POLICY_NOT_FOUND));
+                .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
         policyService.deleteById(id);
         return ApiResponse.onSuccess("정책이 삭제되었습니다.");
     }
