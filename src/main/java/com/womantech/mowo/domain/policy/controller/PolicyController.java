@@ -12,6 +12,7 @@ import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
 import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +51,7 @@ public class PolicyController {
     @PostMapping
     public ApiResponse<PolicyResponseDTO> create(
             @AuthUser Long userId,
-            @RequestBody PolicyRequestDTO request
+            @Valid @RequestBody PolicyRequestDTO request
     ) {
         Members admin = policyService.ensureAdminOrThrow(userId);
         Policy policy = policyConverter.toEntity(request, admin);
@@ -63,7 +64,7 @@ public class PolicyController {
     public ApiResponse<PolicyResponseDTO> update(
             @AuthUser Long userId,
             @PathVariable Long id,
-            @RequestBody PolicyRequestDTO request
+            @Valid @RequestBody PolicyRequestDTO request
     ) {
         policyService.ensureAdminOrThrow(userId);
 
