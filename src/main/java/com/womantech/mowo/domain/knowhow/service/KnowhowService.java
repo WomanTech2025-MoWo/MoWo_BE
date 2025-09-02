@@ -7,6 +7,7 @@ import com.womantech.mowo.domain.knowhow.repository.KnowhowRepository;
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.global.security.service.AuthorizationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,24 +29,29 @@ public class KnowhowService {
         return authorizationService.ensureAdminOrThrow(userId);
     }
 
+    @Transactional(readOnly = true)
     public List<KnowhowResponseListDTO> getAll() {
         return knowhowRepository.findAll().stream()
                 .map(knowhowConverter::toListDTO)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Knowhow> getById(Long id) {
         return knowhowRepository.findByIdWithTodos(id);
     }
 
+    @Transactional
     public Knowhow create(Knowhow knowhow) {
         return knowhowRepository.save(knowhow);
     }
 
+    @Transactional
     public Knowhow update(Knowhow knowhow) {
         return knowhowRepository.save(knowhow);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         knowhowRepository.deleteById(id);
     }
