@@ -9,9 +9,10 @@ import com.womantech.mowo.domain.knowhow.service.KnowhowService;
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.global.apiPayload.ApiResponse;
 import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
-import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.apiPayload.exception.handler.KnowhowHandler;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +37,13 @@ public class KnowhowController {
     @GetMapping("/{id}")
     public ApiResponse<KnowhowResponseDTO> detail(@PathVariable Long id) {
         Knowhow knowhow = knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
         return ApiResponse.onSuccess(knowhowConverter.toDTO(knowhow));
     }
 
     @Operation(summary = "노하우 등록", description = "관리자만.")
     @PostMapping
-    public ApiResponse<KnowhowResponseDTO> create(@AuthUser Long userId, @RequestBody KnowhowRequestDTO request) {
+    public ApiResponse<KnowhowResponseDTO> create(@AuthUser Long userId, @Valid @RequestBody KnowhowRequestDTO request) {
         Members admin = knowhowService.ensureAdminOrThrow(userId);
         Knowhow knowhow = knowhowConverter.toEntity(request, admin);
         Knowhow saved = knowhowService.create(knowhow);
@@ -54,12 +55,12 @@ public class KnowhowController {
     public ApiResponse<KnowhowResponseDTO> update(
             @AuthUser Long userId,
             @PathVariable Long id,
-            @RequestBody KnowhowRequestDTO request
+            @Valid @RequestBody KnowhowRequestDTO request
     ) {
         knowhowService.ensureAdminOrThrow(userId);
 
         Knowhow knowhow = knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
 
         knowhowConverter.apply(knowhow, request);
 
@@ -72,7 +73,7 @@ public class KnowhowController {
     public ApiResponse<String> delete(@AuthUser Long userId, @PathVariable Long id) {
         knowhowService.ensureAdminOrThrow(userId);
         knowhowService.getById(id)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
+                .orElseThrow(() -> new KnowhowHandler(ErrorStatus.KNOWHOW_NOT_FOUND));
         knowhowService.deleteById(id);
         return ApiResponse.onSuccess("노하우가 삭제되었습니다.");
     }
