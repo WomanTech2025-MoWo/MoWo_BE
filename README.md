@@ -73,10 +73,6 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white)](https://www.python.org/) 
 
 
-## 🗂️ ERD
-
-이미지 추가 예정
-
 ## 📂 프로젝트 구조
 
 ```bash
