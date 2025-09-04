@@ -140,22 +140,35 @@ public class PolicyService {
         policyRepository.deleteById(id);
     }
 
+    // 사용자 검증 공통 메서드
+    private Members validateAndGetMember(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    // 정책 존재 여부 확인 (ID만으로 검증)
+    private void validatePolicyExists(Long policyId) {
+        if (!policyRepository.existsById(policyId)) {
+            throw new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND);
+        }
+    }
+
     // 북마크 토글 (추가/제거)
     @Transactional
     public void toggleBookmark(Long userId, Long policyId) {
-        Members member = memberRepository.findById(userId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Members member = validateAndGetMember(userId);
+        validatePolicyExists(policyId);
         
-        Policy policy = policyRepository.findById(policyId)
-                .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
-        
-        Optional<PolicyBookmark> existingBookmark = policyBookmarkRepository.findByMemberAndPolicy(member, policy);
+        Optional<PolicyBookmark> existingBookmark = policyBookmarkRepository.findByMemberAndPolicyId(member, policyId);
         
         if (existingBookmark.isPresent()) {
             // 북마크가 존재하면 제거
             policyBookmarkRepository.delete(existingBookmark.get());
         } else {
-            // 북마크가 없으면 추가
+            // 북마크가 없으면 추가 - Policy 엔티티 조회 필요
+            Policy policy = policyRepository.findById(policyId)
+                    .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
+            
             PolicyBookmark bookmark = PolicyBookmark.builder()
                     .member(member)
                     .policy(policy)
@@ -167,13 +180,19 @@ public class PolicyService {
     // 북마크 여부 확인
     @Transactional(readOnly = true)
     public boolean isBookmarked(Long userId, Long policyId) {
-        Members member = memberRepository.findById(userId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Members member = validateAndGetMember(userId);
+        return policyBookmarkRepository.existsByMemberAndPolicyId(member, policyId);
+    }
+
+    // 배치로 북마크 여부 확인 (성능 최적화)
+    @Transactional(readOnly = true)
+    public List<Long> getBookmarkedPolicyIds(Long userId, List<Long> policyIds) {
+        if (policyIds == null || policyIds.isEmpty()) {
+            return List.of();
+        }
         
-        Policy policy = policyRepository.findById(policyId)
-                .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
-        
-        return policyBookmarkRepository.existsByMemberAndPolicy(member, policy);
+        Members member = validateAndGetMember(userId);
+        return policyBookmarkRepository.findBookmarkedPolicyIds(member, policyIds);
     }
 
 }

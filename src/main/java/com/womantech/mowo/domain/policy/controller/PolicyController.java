@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -35,11 +37,19 @@ public class PolicyController {
             @RequestParam(required = false) String status,
             Pageable pageable
     ) {
-        Page<PolicyResponseListDTO> page = policyService.search(regionCode, status, pageable)
-                .map(policy -> {
-                    Boolean isBookmarked = policyService.isBookmarked(userId, policy.getId());
-                    return policyConverter.toListDTO(policy, isBookmarked);
-                });
+        Page<Policy> policies = policyService.search(regionCode, status, pageable);
+        
+        // 성능 최적화: 배치로 북마크 여부 조회
+        List<Long> policyIds = policies.getContent().stream()
+                .map(Policy::getId)
+                .toList();
+        List<Long> bookmarkedPolicyIds = policyService.getBookmarkedPolicyIds(userId, policyIds);
+        
+        Page<PolicyResponseListDTO> page = policies.map(policy -> {
+            boolean isBookmarked = bookmarkedPolicyIds.contains(policy.getId());
+            return policyConverter.toListDTO(policy, isBookmarked);
+        });
+        
         return ApiResponse.onSuccess(page);
     }
 
