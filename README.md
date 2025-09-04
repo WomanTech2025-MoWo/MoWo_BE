@@ -89,7 +89,11 @@
 ```bash
 # 주요 엔드포인트
 
-추가 예정
+- `/api/todos`    : TODO 관리 API
+- `/api/members`  : 회원 관리 API
+- `/api/policies` : 정책 관리 API
+- `/api/knowhows` : 노하우 관리 API
+- `/api/predict`  : AI 주간 컨디션 예측 API
 ```
 
 
