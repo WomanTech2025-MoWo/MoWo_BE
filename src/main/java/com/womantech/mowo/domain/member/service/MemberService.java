@@ -7,10 +7,14 @@ import com.womantech.mowo.domain.member.entity.MemberSymptoms;
 import com.womantech.mowo.domain.member.entity.Members;
 import com.womantech.mowo.domain.member.repository.MemberRepository;
 import com.womantech.mowo.domain.member.repository.MemberSymptomsRepository;
+import com.womantech.mowo.domain.policy.entity.PolicyBookmark;
+import com.womantech.mowo.domain.policy.repository.PolicyBookmarkRepository;
 import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
 import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
 import com.womantech.mowo.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -37,8 +41,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
     private final MemberSymptomsRepository memberSymptomsRepository;
+    private final PolicyBookmarkRepository policyBookmarkRepository;
 
 
     public UserResponseDTO.PregnancyWeekResponseDTO getPregnancyWeek(Long memberId){
@@ -227,5 +231,13 @@ public class MemberService {
                 .userId(memberId)
                 .status(randomStatus)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PolicyBookmark> getBookmarkedPolicies(Long memberId, Pageable pageable) {
+        Members member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        return policyBookmarkRepository.findByMemberOrderByCreatedAtDesc(member, pageable);
     }
 }

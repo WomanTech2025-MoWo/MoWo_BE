@@ -1,9 +1,15 @@
 package com.womantech.mowo.domain.policy.service;
 
 import com.womantech.mowo.domain.member.entity.Members;
+import com.womantech.mowo.domain.member.repository.MemberRepository;
 import com.womantech.mowo.domain.policy.entity.Policy;
+import com.womantech.mowo.domain.policy.entity.PolicyBookmark;
 import com.womantech.mowo.domain.policy.entity.RegionCode;
+import com.womantech.mowo.domain.policy.repository.PolicyBookmarkRepository;
 import com.womantech.mowo.domain.policy.repository.PolicyRepository;
+import com.womantech.mowo.global.apiPayload.code.status.ErrorStatus;
+import com.womantech.mowo.global.apiPayload.exception.handler.MemberHandler;
+import com.womantech.mowo.global.apiPayload.exception.handler.PolicyHandler;
 import com.womantech.mowo.global.security.service.AuthorizationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +24,15 @@ import java.util.Optional;
 public class PolicyService {
 
     private final PolicyRepository policyRepository;
+    private final PolicyBookmarkRepository policyBookmarkRepository;
+    private final MemberRepository memberRepository;
     private final AuthorizationService authorizationService;
 
-    public PolicyService(PolicyRepository policyRepository, AuthorizationService authorizationService) {
+    public PolicyService(PolicyRepository policyRepository, PolicyBookmarkRepository policyBookmarkRepository, 
+                        MemberRepository memberRepository, AuthorizationService authorizationService) {
         this.policyRepository = policyRepository;
+        this.policyBookmarkRepository = policyBookmarkRepository;
+        this.memberRepository = memberRepository;
         this.authorizationService = authorizationService;
     }
 
@@ -127,6 +138,61 @@ public class PolicyService {
     @Transactional
     public void deleteById(Long id) {
         policyRepository.deleteById(id);
+    }
+
+    // 사용자 검증 공통 메서드
+    private Members validateAndGetMember(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    // 정책 존재 여부 확인 (ID만으로 검증)
+    private void validatePolicyExists(Long policyId) {
+        if (!policyRepository.existsById(policyId)) {
+            throw new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND);
+        }
+    }
+
+    // 북마크 토글 (추가/제거)
+    @Transactional
+    public void toggleBookmark(Long userId, Long policyId) {
+        Members member = validateAndGetMember(userId);
+        validatePolicyExists(policyId);
+        
+        Optional<PolicyBookmark> existingBookmark = policyBookmarkRepository.findByMemberAndPolicyId(member, policyId);
+        
+        if (existingBookmark.isPresent()) {
+            // 북마크가 존재하면 제거
+            policyBookmarkRepository.delete(existingBookmark.get());
+        } else {
+            // 북마크가 없으면 추가 - Policy 엔티티 조회 필요
+            Policy policy = policyRepository.findById(policyId)
+                    .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
+            
+            PolicyBookmark bookmark = PolicyBookmark.builder()
+                    .member(member)
+                    .policy(policy)
+                    .build();
+            policyBookmarkRepository.save(bookmark);
+        }
+    }
+
+    // 북마크 여부 확인
+    @Transactional(readOnly = true)
+    public boolean isBookmarked(Long userId, Long policyId) {
+        Members member = validateAndGetMember(userId);
+        return policyBookmarkRepository.existsByMemberAndPolicyId(member, policyId);
+    }
+
+    // 배치로 북마크 여부 확인 (성능 최적화)
+    @Transactional(readOnly = true)
+    public List<Long> getBookmarkedPolicyIds(Long userId, List<Long> policyIds) {
+        if (policyIds == null || policyIds.isEmpty()) {
+            return List.of();
+        }
+        
+        Members member = validateAndGetMember(userId);
+        return policyBookmarkRepository.findBookmarkedPolicyIds(member, policyIds);
     }
 
 }

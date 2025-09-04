@@ -80,6 +80,19 @@ public class PolicyConverter {
                 .startDate(policy.getStartDate())
                 .endDate(policy.getEndDate())
                 .content(policy.getContent())
+                .isBookmarked(null)  // 사용자 정보가 없는 경우
+                .build();
+    }
+
+    public PolicyResponseListDTO toListDTO(Policy policy, Boolean isBookmarked) {
+        return PolicyResponseListDTO.builder()
+                .policyId(policy.getId())
+                .title(policy.getTitle())
+                .regionCode(policy.getRegionCode().getCode())
+                .startDate(policy.getStartDate())
+                .endDate(policy.getEndDate())
+                .content(policy.getContent())
+                .isBookmarked(isBookmarked)
                 .build();
     }
 

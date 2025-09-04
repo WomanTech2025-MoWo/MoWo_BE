@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -27,15 +29,27 @@ public class PolicyController {
     private final PolicyService policyService;
     private final PolicyConverter policyConverter;
 
-    @Operation(summary = "정책 목록 조회", description = "regionCode와 status로 필터링. 둘 다 옵션. 페이지네이션 지원.")
+    @Operation(summary = "정책 목록 조회", description = "로그인 필수, regionCode와 status로 필터링. 둘 다 옵션. 페이지네이션 지원. 북마크 여부 포함.")
     @GetMapping
     public ApiResponse<Page<PolicyResponseListDTO>> list(
+            @AuthUser Long userId,
             @RequestParam(required = false) String regionCode,
             @RequestParam(required = false) String status,
             Pageable pageable
     ) {
-        Page<PolicyResponseListDTO> page = policyService.search(regionCode, status, pageable)
-                .map(policyConverter::toListDTO);
+        Page<Policy> policies = policyService.search(regionCode, status, pageable);
+        
+        // 성능 최적화: 배치로 북마크 여부 조회
+        List<Long> policyIds = policies.getContent().stream()
+                .map(Policy::getId)
+                .toList();
+        List<Long> bookmarkedPolicyIds = policyService.getBookmarkedPolicyIds(userId, policyIds);
+        
+        Page<PolicyResponseListDTO> page = policies.map(policy -> {
+            boolean isBookmarked = bookmarkedPolicyIds.contains(policy.getId());
+            return policyConverter.toListDTO(policy, isBookmarked);
+        });
+        
         return ApiResponse.onSuccess(page);
     }
 
@@ -85,6 +99,26 @@ public class PolicyController {
                 .orElseThrow(() -> new PolicyHandler(ErrorStatus.POLICY_NOT_FOUND));
         policyService.deleteById(id);
         return ApiResponse.onSuccess("정책이 삭제되었습니다.");
+    }
+
+    @Operation(summary = "정책 북마크 토글", description = "현재 사용자의 정책 북마크를 추가하거나 제거합니다.")
+    @PostMapping("/{id}/bookmark")
+    public ApiResponse<String> toggleBookmark(
+            @AuthUser Long userId,
+            @PathVariable Long id
+    ) {
+        policyService.toggleBookmark(userId, id);
+        return ApiResponse.onSuccess("북마크가 토글되었습니다.");
+    }
+
+    @Operation(summary = "정책 북마크 여부 조회", description = "현재 사용자가 해당 정책을 북마크했는지 확인합니다.")
+    @GetMapping("/{id}/bookmark")
+    public ApiResponse<Boolean> isBookmarked(
+            @AuthUser Long userId,
+            @PathVariable Long id
+    ) {
+        boolean isBookmarked = policyService.isBookmarked(userId, id);
+        return ApiResponse.onSuccess(isBookmarked);
     }
 
 }
