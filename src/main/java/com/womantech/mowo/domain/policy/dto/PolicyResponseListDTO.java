@@ -14,4 +14,5 @@ public class PolicyResponseListDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String content;
+    private Boolean isBookmarked;
 }

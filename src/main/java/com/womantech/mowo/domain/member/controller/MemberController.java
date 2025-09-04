@@ -3,11 +3,16 @@ package com.womantech.mowo.domain.member.controller;
 import com.womantech.mowo.domain.member.dto.UserRequestDTO;
 import com.womantech.mowo.domain.member.dto.UserResponseDTO;
 import com.womantech.mowo.domain.member.service.MemberService;
+import com.womantech.mowo.domain.policy.converter.PolicyConverter;
+import com.womantech.mowo.domain.policy.dto.PolicyResponseListDTO;
+import com.womantech.mowo.domain.policy.entity.PolicyBookmark;
 import com.womantech.mowo.global.apiPayload.ApiResponse;
 import com.womantech.mowo.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final PolicyConverter policyConverter;
 
     @Operation(summary = "일반 회원가입 API",
             description = "아이디(이메일)와 비밀번호를 입력하여 회원가입을 진행합니다." +
@@ -90,5 +96,16 @@ public class MemberController {
             @AuthUser Long userId) {
         UserResponseDTO.AiOutputResponseDTO result = memberService.getRandomAiOutput(userId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "북마크한 정책 목록 조회 API", description = "현재 사용자가 북마크한 정책 목록을 최신순으로 조회합니다.")
+    @GetMapping("/bookmarks")
+    public ApiResponse<Page<PolicyResponseListDTO>> getBookmarkedPolicies(
+            @AuthUser Long userId,
+            Pageable pageable) {
+        Page<PolicyBookmark> bookmarks = memberService.getBookmarkedPolicies(userId, pageable);
+        Page<PolicyResponseListDTO> response = bookmarks.map(bookmark -> 
+            policyConverter.toListDTO(bookmark.getPolicy(), true));
+        return ApiResponse.onSuccess(response);
     }
 }
