@@ -78,7 +78,33 @@
 ```bash
 # MoWo Backend Directory 구조
 
-추가 예정
+ mowo_be/                                                                   
+  ├── src/main/java/com/womantech/mowo/                                      
+  │   ├── MowoApplication.java            # Spring Boot 메인 클래스
+  │   │                                                                      
+  │   ├── domain/                         # 도메인별 비즈니스 로직 
+  │   │   ├── common/                     # 공통 도메인(BaseEntity 등)
+  │   │   ├── member/                     # 사용자 도메인(회원가입, 로그인, 온보딩)
+  │   │   ├── policy/                     # 정책 도메인(정책 CRUD, 북마크)
+  │   │   ├── knowhow/                    # 노하우 도메인(노하우 CRUD)
+  │   │   ├── todo/                       # 할일 도메인(개인 할일 관리)
+  │   │   └── predict/                    # AI 예측 도메인(건강 상태 예측)
+  │   │
+  │   └── global/                         # 전역 설정 및 공통 기능
+  │       ├── security/                   # 보안(JWT, Spring Security)
+  │       ├── config/                     # 전역 설정(Swagger, CORS, Web)
+  │       ├── apiPayload/                 # API 응답 표준화 및 예외 처리
+  │       └── ai/                         # AI 관련 공통 기능
+  │
+  ├── ai/                                 # Python AI 모델
+  │   ├── predict.py                      # AI 건강 상태 예측 모델
+  │   ├── model.pkl                       # 학습된 머신러닝 모델
+  │   └── *.csv, *.json                   # 학습/테스트 데이터
+  │
+  ├── src/main/resources/                 # 리소스 파일
+  ├── docs/                               # 문서
+  ├── build.gradle                        # Gradle 빌드 설정
+  └── README.md                           # 프로젝트 문서
 ```
 
 
