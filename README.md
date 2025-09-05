@@ -2,6 +2,7 @@
 
 임신과 직장을 모두 챙겨야 하는 여성을 위한 AI 투두리스트
 
+![MoWo Thumbnail](https://github.com/user-attachments/assets/962747a9-bc86-4b16-8ffa-02f8e4cde705)
 
 ## 🎯 프로젝트 개요
 
