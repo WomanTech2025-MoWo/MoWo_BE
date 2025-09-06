@@ -49,7 +49,9 @@
 
 **<기능별 시연 이미지 및 상세 설명>**   
 
-시연 이미지 추가 예정
+| 로그인 | 브리핑 | 투두 | 모우의 주간편지(AI)                                                                               | 정보(정책 및 노하우)                                                                              |
+|-----|-----|----|--------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| ![login](https://github.com/user-attachments/assets/bd0dfbf1-965d-4680-a7a0-126d4fec70bb)    | ![briefing](https://github.com/user-attachments/assets/50f02277-4454-4396-8d6d-927daa306a38)    | ![todo](https://github.com/user-attachments/assets/fc325e69-b7f5-4112-9f1b-4de9c5735d8e)   | ![ai](https://github.com/user-attachments/assets/9c12052f-926d-4de7-9f14-5f1ba13ff730)  | ![info](https://github.com/user-attachments/assets/82f35c75-5660-4ffb-9f7b-7b2592f953ea) |
 
 
 ## 👥 Team *We R Is*
