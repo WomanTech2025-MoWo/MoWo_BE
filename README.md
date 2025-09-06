@@ -112,7 +112,7 @@
 
 ## 📑 API 문서
 
-- [🔗 MoWo OpenAPI 파일 바로가기](https://github.com/WomanTech2025-MoWo/MoWo_BE/blob/develop/docs/openapi.json)
+[🔗 MoWo OpenAPI 파일 바로가기](https://github.com/WomanTech2025-MoWo/MoWo_BE/blob/develop/docs/openapi.json)
 
 ```bash
 # 주요 엔드포인트
